@@ -19,7 +19,15 @@ const pool = mysql.createPool({
     connectionLimit: 10,
     queueLimit: 0
 });
-
+app.get('/health', async (req, res) => {
+    try {
+        const [rows] = await pool.query('SELECT 1 AS status');
+        res.json({ status: 'ok', db: 'connected' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database connection failed' });
+    }
+});
 // --- ЗАДАНИЕ 1. READ + Фильтрация ---
 
 // Получение списка кружков (с фильтрацией по названию, если передан параметр ?name=...)
